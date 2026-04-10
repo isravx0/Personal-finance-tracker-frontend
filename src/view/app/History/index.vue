@@ -1,5 +1,6 @@
 <template>
-	<div class="container mt-4">
+	<div class="page-shell">
+		<div class="page-container">
 		<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
 			<div>
 				<h2 class="mb-1 fw-bold text-dark">Transaction History</h2>
@@ -7,8 +8,8 @@
 			</div>
 		</div>
 
-		<div class="card border-0 shadow-sm rounded-4">
-			<div class="card-body p-4">
+		<div class="card border-0 shadow-sm rounded-4 page-section-card">
+			<div class="card-body p-4 page-section-body">
 				<!-- Filters -->
 				<div class="row g-3 mb-4">
 					<div class="col-12 col-md-5">
@@ -53,7 +54,7 @@
 				</div>
 
 				<!-- Table -->
-				<div v-else class="table-responsive">
+				<div v-else class="table-responsive desktop-table">
 					<table class="table align-middle mb-0">
 						<thead>
 							<tr class="text-secondary small">
@@ -89,27 +90,66 @@
 					</table>
 				</div>
 
+				<div class="mobile-card-list">
+					<div v-for="item in filteredHistory" :key="`${item.id}-mobile`" class="history-mobile-card">
+						<div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+							<div>
+								<div class="fw-semibold text-dark">{{ formatDate(item.created_at) }}</div>
+								<div class="small text-secondary mt-1">Saved analysis record</div>
+							</div>
+							<span class="badge rounded-pill px-3 py-2" :style="getStatusStyle(item)">
+								{{ getStatusLabel(item) }}
+							</span>
+						</div>
+
+						<div class="row g-3 small">
+							<div class="col-6">
+								<div class="text-secondary">Income</div>
+								<div class="fw-semibold text-dark">{{ formatMoney(item.monthly_income) }}</div>
+							</div>
+							<div class="col-6">
+								<div class="text-secondary">Expenses</div>
+								<div class="fw-semibold text-dark">{{ formatMoney(item.total_expenses) }}</div>
+							</div>
+							<div class="col-6">
+								<div class="text-secondary">Savings</div>
+								<div class="fw-semibold text-dark">{{ formatMoney(item.actual_savings) }}</div>
+							</div>
+							<div class="col-6">
+								<div class="text-secondary">Remaining</div>
+								<div :class="Number(item.remaining_balance) >= 0 ? 'text-success fw-semibold' : 'text-danger fw-semibold'">
+									{{ formatMoney(item.remaining_balance) }}
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="text-secondary mb-1">Advice</div>
+								<div class="small text-dark history-mobile-advice">{{ item.advice || '-' }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				<!-- Summary -->
 				<div v-if="filteredHistory.length > 0" class="row g-3 mt-4">
-					<div class="col-12 col-md-3">
+					<div class="col-6 col-lg-3">
 						<div class="bg-light rounded-4 p-3">
 							<div class="small text-secondary">Total Records</div>
 							<div class="fw-bold fs-5">{{ filteredHistory.length }}</div>
 						</div>
 					</div>
-					<div class="col-12 col-md-3">
+					<div class="col-6 col-lg-3">
 						<div class="bg-light rounded-4 p-3">
 							<div class="small text-secondary">Avg Income</div>
 							<div class="fw-bold fs-5">{{ formatMoney(avgIncome) }}</div>
 						</div>
 					</div>
-					<div class="col-12 col-md-3">
+					<div class="col-6 col-lg-3">
 						<div class="bg-light rounded-4 p-3">
 							<div class="small text-secondary">Avg Expenses</div>
 							<div class="fw-bold fs-5">{{ formatMoney(avgExpenses) }}</div>
 						</div>
 					</div>
-					<div class="col-12 col-md-3">
+					<div class="col-6 col-lg-3">
 						<div class="bg-light rounded-4 p-3">
 							<div class="small text-secondary">Avg Savings</div>
 							<div class="fw-bold fs-5">{{ formatMoney(avgSavings) }}</div>
@@ -117,6 +157,7 @@
 					</div>
 				</div>
 			</div>
+		</div>
 		</div>
 	</div>
 </template>
@@ -240,3 +281,16 @@ export default {
 	}
 }
 </script>
+
+<style scoped>
+.history-mobile-card {
+	background: #f8faf8;
+	border: 1px solid rgba(45, 138, 78, 0.08);
+	border-radius: 1rem;
+	padding: 1rem;
+}
+
+.history-mobile-advice {
+	line-height: 1.5;
+}
+</style>

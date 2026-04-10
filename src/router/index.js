@@ -25,18 +25,22 @@ const routes = [
 	{
 		path: '/view/app/dashboard',
 		component: () => import('../view/app/Dashboard/index.vue'),
+		meta: { requiresAuth: true },
 	},
 	{
 		path: '/view/app/financial-analysis',
 		component: () => import('../view/app/FinancialAnalysis/index.vue'),
+		meta: { requiresAuth: true },
 	},
 	{
 		path: '/view/app/history',
 		component: () => import('../view/app/History/index.vue'),
+		meta: { requiresAuth: true },
 	},
 	{
 		path: '/view/app/profile',
 		component: () => import('../view/app/Profile/index.vue'),
+		meta: { requiresAuth: true },
 	},
 ]
 

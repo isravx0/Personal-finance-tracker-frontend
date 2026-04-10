@@ -1,9 +1,6 @@
 <template>
-	<div class="min-vh-100 bg-light">
-		<div class="d-flex">
-
-			<!-- Main -->
-			<main class="flex-grow-1 p-4">
+	<div class="page-shell">
+		<div class="page-container">
 				<div class="mb-4">
 					<h4 class="fw-bold text-dark mb-1">My Profile</h4>
 					<p class="text-secondary small mb-0">Manage your personal information and account details.</p>
@@ -12,8 +9,8 @@
 				<div class="row g-4">
 					<!-- Profile Summary -->
 					<div class="col-12 col-lg-4">
-						<div class="card border-0 shadow-sm rounded-4 h-100">
-							<div class="card-body p-4 text-center">
+						<div class="card border-0 shadow-sm rounded-4 h-100 page-section-card">
+							<div class="card-body p-4 page-section-body text-center">
 								<div
 									class="rounded-circle d-inline-flex align-items-center justify-content-center text-white fw-bold mb-3"
 									style="width: 82px; height: 82px; background-color: #2d8a4e; font-size: 28px"
@@ -40,9 +37,9 @@
 
 					<!-- Edit Form -->
 					<div class="col-12 col-lg-8">
-						<div class="card border-0 shadow-sm rounded-4">
-							<div class="card-body p-4">
-								<div class="d-flex justify-content-between align-items-center mb-4">
+						<div class="card border-0 shadow-sm rounded-4 page-section-card">
+							<div class="card-body p-4 page-section-body">
+								<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 									<h5 class="fw-bold text-dark mb-0">Edit Profile</h5>
 									<span
 										class="badge rounded-pill px-3 py-2 small"
@@ -118,7 +115,7 @@
 										</div>
 									</div>
 
-									<div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+									<div class="d-flex flex-column flex-sm-row gap-2 mt-4 profile-actions">
 										<button
 											type="submit"
 											class="btn fw-semibold rounded-3 py-2 px-4 text-white"
@@ -143,7 +140,6 @@
 						</div>
 					</div>
 				</div>
-			</main>
 		</div>
 	</div>
 </template>
@@ -279,3 +275,11 @@ export default {
 	}
 }
 </script>
+
+<style scoped>
+@media (max-width: 767.98px) {
+	.profile-actions .btn {
+		width: 100%;
+	}
+}
+</style>

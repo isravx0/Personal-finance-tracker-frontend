@@ -1,6 +1,6 @@
 <template>
-	<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
-		<div class="col-11 col-sm-7 col-md-5 col-lg-3">
+	<div class="auth-shell">
+		<div class="auth-panel">
 
 			<!-- Header -->
 			<div class="text-center mb-4">
@@ -15,7 +15,7 @@
 				</div>
 
 				<!-- Card -->
-				<div class="card border-0 shadow-sm rounded-4 p-2">
+				<div class="card border-0 shadow-sm rounded-4 p-2 page-section-card">
 					<div class="card-body">
 
 					<div v-if="errorMsg" class="alert alert-danger py-2 small rounded-3">{{ errorMsg }}</div>

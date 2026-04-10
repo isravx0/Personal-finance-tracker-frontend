@@ -1,6 +1,6 @@
 <template>
-	<div class="min-vh-100 bg-light d-flex align-items-center py-5">
-		<div class="container">
+	<div class="page-shell d-flex align-items-center py-4">
+		<div class="page-container page-container--narrow">
 			<div class="row justify-content-center">
 				<div class="col-12 col-md-10 col-lg-8 col-xl-7">
 
@@ -22,8 +22,8 @@
 					</div>
 
 					<!-- Form card -->
-					<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-						<div class="card-body p-4 p-md-5">
+					<div class="card border-0 shadow-sm rounded-4 overflow-hidden page-section-card">
+						<div class="card-body p-4 p-md-5 page-section-body analysis-form-body">
 							<div v-if="errorMsg" class="alert alert-danger rounded-3 py-2 small mb-4">
 								{{ errorMsg }}
 							</div>
@@ -153,15 +153,15 @@
 							<div class="bg-success bg-opacity-10 rounded-4 p-3 mb-4">
 								<div class="small fw-semibold text-success mb-2">Quick preview</div>
 								<div class="row g-2 small">
-									<div class="col-6">
+									<div class="col-6 col-md-4">
 										<div class="text-secondary">Income</div>
 										<div class="fw-bold text-dark">${{ previewIncome }}</div>
 									</div>
-									<div class="col-6">
+									<div class="col-6 col-md-4">
 										<div class="text-secondary">Expenses</div>
 										<div class="fw-bold text-dark">${{ previewExpenses }}</div>
 									</div>
-									<div class="col-12">
+									<div class="col-12 col-md-4">
 										<div class="text-secondary">Estimated remaining</div>
 										<div class="fw-bold" :class="previewRemaining >= 0 ? 'text-success' : 'text-danger'">
 											${{ previewRemaining }}
@@ -282,3 +282,11 @@ export default {
 	}
 }
 </script>
+
+<style scoped>
+@media (max-width: 767.98px) {
+	.analysis-form-body {
+		padding: 1rem !important;
+	}
+}
+</style>

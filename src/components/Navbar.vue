@@ -1,11 +1,11 @@
 <template>
-	<nav class="navbar navbar-expand-lg bg-white shadow-sm px-3 px-lg-4 py-2 mb-1">
+	<nav class="navbar navbar-expand-lg bg-white shadow-sm px-3 px-lg-4 py-2 mb-1 mintly-navbar">
 		<!-- Brand -->
-		<a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="#">
-			<div class="d-flex align-items-center justify-content-center" style="width:150px;height:70px;">
-				<img src="/public/images/logo-1.png" alt="Logo" style="width:250px;height:100px;">
+		<router-link class="navbar-brand d-flex align-items-center gap-2 text-decoration-none mintly-navbar__brand" to="/view/app/dashboard">
+			<div class="d-flex align-items-center justify-content-center mintly-navbar__logo-wrap">
+				<img src="/public/images/logo-1.png" alt="Logo" class="mintly-navbar__logo">
 	  		</div>
-		</a>
+		</router-link>
 
 		<!-- Toggler -->
 		<button class="navbar-toggler border-0 shadow-none" type="button" @click="menuOpen = !menuOpen">
@@ -13,32 +13,37 @@
 		</button>
 
 		<!-- Collapsible -->
-		<div class="navbar-collapse" :class="menuOpen ? 'show' : 'collapse'">
+		<div class="navbar-collapse mintly-navbar__collapse" :class="menuOpen ? 'show' : 'collapse'">
 	 		<!-- Center Links -->
-			<ul class="navbar-nav mx-auto gap-1 my-3 my-lg-0">
+			<ul class="navbar-nav mx-auto gap-1 my-3 my-lg-0 mintly-navbar__links">
 				<li class="nav-item" v-for="item in navLinks" :key="item.route">
-					<router-link :to="item.route" class="nav-link px-3 py-2 rounded-3 small fw-semibold" :class="activeLink === item.route ? 'text-white' : 'text-secondary'" :style="activeLink === item.route ? 'background-color:#2d8a4e;' : ''">
+					<router-link
+						:to="item.route"
+						class="nav-link px-3 py-2 rounded-3 small fw-semibold mintly-navbar__link"
+						:class="$route.path === item.route ? 'text-white mintly-navbar__link--active' : 'text-secondary'"
+						@click="closeMenus"
+					>
 					{{ item.label }}
 					</router-link>
 				</li>
 			</ul>
 
 			<!-- Right Side -->
-			<div class="d-flex align-items-center gap-2 mt-3 mt-lg-0 position-relative">
+			<div class="d-flex align-items-center gap-2 mt-3 mt-lg-0 position-relative mintly-navbar__actions">
 
 				<!-- Profile -->
-				<div class="position-relative">
-					<button class="btn p-0 border-0 d-flex align-items-center gap-2" @click="toggleProfile">
+				<div class="position-relative w-100 w-lg-auto">
+					<button class="btn p-0 border-0 d-flex align-items-center gap-2 mintly-navbar__profile-button" @click="toggleProfile">
 						<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width:36px;height:36px;background-color:#2d8a4e;font-size:13px;">
 							{{ userStore.user?.name ? userStore.user.name.charAt(0).toUpperCase() : 'U' }}
 						</div>
-						<span class="small fw-semibold text-dark d-none d-lg-inline">{{ userStore.user?.name || 'User' }}</span>
-						<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#999" viewBox="0 0 16 16" class="d-none d-lg-inline">
+						<span class="small fw-semibold text-dark mintly-navbar__profile-name">{{ userStore.user?.name || 'User' }}</span>
+						<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#999" viewBox="0 0 16 16" class="mintly-navbar__profile-caret">
 							<path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
 						</svg>
 				</button>
 
-				<div v-if="showProfile" class="position-absolute end-0 mt-2 bg-white rounded-4 shadow py-2" style="width:220px; z-index:1000;">
+				<div v-if="showProfile" class="position-absolute end-0 mt-2 bg-white rounded-4 shadow py-2 mintly-navbar__dropdown" style="width:220px; z-index:1000;">
 						<div class="px-3 py-2 border-bottom mb-1">
 							<div class="small fw-bold text-dark">{{ userStore.user?.name || 'User' }}</div>
 							<div class="text-secondary" style="font-size:11px;">{{ userStore.user?.email || 'user@mintly.com' }}</div>
@@ -75,7 +80,6 @@ export default {
 		return {
 			menuOpen: false,
 			showProfile: false,
-			activeLink: 'Dashboard',
 			searchQuery: '',
 			navLinks: [
 				{
@@ -109,7 +113,12 @@ export default {
 		toggleProfile() {
 			this.showProfile = !this.showProfile
 		},
+		closeMenus() {
+			this.menuOpen = false
+			this.showProfile = false
+		},
 		handleProfileOption(option) {
+			this.closeMenus()
 			if (option === 'My Profile') {
 				this.$router.push('/view/app/profile')
 			}
@@ -120,13 +129,18 @@ export default {
 			this.errorMsg = ''
 			this.loading = true
 			try {
-				const response = await axios.post('http://localhost:8080/user/logout', {
-					withCredentials: true
-				})
+				const response = await axios.post(
+					'http://localhost:8080/user/logout',
+					{},
+					{
+						withCredentials: true
+					}
+				)
 				if (response.data.success) {
 					// remove user in Pinia
 					this.userStore.clearUser()
 					// Redirect to login page
+					this.closeMenus()
 					this.$router.push('/view/public/login')
 				} else {
 					this.errorMsg = response.data.message
@@ -144,3 +158,94 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+.mintly-navbar {
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+}
+
+.mintly-navbar__brand {
+	min-width: 0;
+}
+
+.mintly-navbar__logo-wrap {
+	width: 150px;
+	height: 70px;
+}
+
+.mintly-navbar__logo {
+	width: 100%;
+	height: auto;
+	max-height: 100%;
+	object-fit: contain;
+}
+
+.mintly-navbar__link--active {
+	background-color: #2d8a4e;
+}
+
+.mintly-navbar__profile-name {
+	display: none;
+	max-width: 10rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mintly-navbar__profile-caret {
+	display: none;
+}
+
+@media (min-width: 576px) {
+	.mintly-navbar__profile-name,
+	.mintly-navbar__profile-caret {
+		display: inline-block;
+	}
+}
+
+@media (max-width: 991.98px) {
+	.mintly-navbar__logo-wrap {
+		width: 120px;
+		height: 56px;
+	}
+
+	.mintly-navbar__collapse {
+		padding-top: 0.75rem;
+	}
+
+	.mintly-navbar__links,
+	.mintly-navbar__actions {
+		width: 100%;
+	}
+
+	.mintly-navbar__link {
+		padding: 0.85rem 1rem !important;
+	}
+
+	.mintly-navbar__profile-button {
+		width: 100%;
+		justify-content: space-between;
+		padding: 0.85rem 1rem !important;
+		background: #f6f8f6;
+		border-radius: 1rem;
+	}
+
+	.mintly-navbar__profile-name,
+	.mintly-navbar__profile-caret {
+		display: inline-block;
+	}
+
+	.mintly-navbar__profile-name {
+		flex: 1;
+		text-align: left;
+	}
+
+	.mintly-navbar__dropdown {
+		position: static !important;
+		width: 100% !important;
+		margin-top: 0.75rem !important;
+	}
+}
+</style>

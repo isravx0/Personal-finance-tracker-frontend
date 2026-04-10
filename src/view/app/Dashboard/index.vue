@@ -1,11 +1,8 @@
 <template>
-	<div class="min-vh-100 bg-light">
-		<div class="d-flex">
-			
-			<!-- Main Content -->
-			<main class="flex-grow-1 p-4">
+	<div class="page-shell">
+		<div class="page-container dashboard-main">
 				<!-- Top bar -->
-				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 dashboard-topbar">
 					<div>
 						<h4 class="fw-bold text-dark mb-0">
 							Good morning, {{ userStore.user?.name || "User" }} 🌿
@@ -13,7 +10,7 @@
 						<p class="text-secondary small mb-0">Here’s your latest financial overview</p>
 					</div>
 					<div class="d-flex align-items-center gap-2">
-						<span class="badge rounded-pill px-3 py-2 small"
+						<span class="badge rounded-pill px-3 py-2 small dashboard-date-badge"
 							style="background-color: #e8f5ee; color: #2d8a4e">
 							{{ today }}
 						</span>
@@ -35,8 +32,8 @@
 
 				<!-- Stat Cards -->
 				<div class="row g-3 mb-4">
-					<div class="col-6 col-xl-3" v-for="stat in stats" :key="stat.label">
-						<div class="card border-0 shadow-sm rounded-4 h-100">
+					<div class="col-12 col-sm-6 col-xl-3" v-for="stat in stats" :key="stat.label">
+						<div class="card border-0 shadow-sm rounded-4 h-100 page-section-card">
 							<div class="card-body p-3">
 								<div class="d-flex justify-content-between align-items-start mb-2">
 									<span class="small fw-semibold text-secondary">{{ stat.label }}</span>
@@ -45,7 +42,7 @@
 										<span v-html="stat.icon"></span>
 									</div>
 								</div>
-								<div class="fs-4 fw-bold text-dark">{{ stat.value }}</div>
+								<div class="fs-4 fw-bold text-dark dashboard-stat-value">{{ stat.value }}</div>
 								<div class="small mt-1" :class="stat.up ? 'text-success' : 'text-danger'">
 									{{ stat.up ? "▲" : "▼" }} {{ stat.change }}
 								</div>
@@ -55,8 +52,8 @@
 				</div>
 
 				<!-- Insight -->
-				<div v-if="analysisAdvice" class="card border-0 shadow-sm rounded-4 mb-4">
-					<div class="card-body p-4">
+				<div v-if="analysisAdvice" class="card border-0 shadow-sm rounded-4 mb-4 page-section-card">
+					<div class="card-body p-4 page-section-body">
 						<div class="d-flex align-items-start gap-3">
 							<div class="rounded-3 d-flex align-items-center justify-content-center bg-success bg-opacity-10"
 								style="width: 42px; height: 42px">
@@ -78,11 +75,11 @@
 				<div class="row g-3 mb-4">
 					<!-- Line Chart -->
 					<div class="col-12 col-lg-8">
-						<div class="card border-0 shadow-sm rounded-4 h-100">
-							<div class="card-body p-4">
-								<div class="d-flex justify-content-between align-items-center mb-3">
+						<div class="card border-0 shadow-sm rounded-4 h-100 page-section-card">
+							<div class="card-body p-4 page-section-body">
+								<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 dashboard-chart-toolbar">
 									<h6 class="fw-bold text-dark mb-0">Income vs Expenses Overview</h6>
-									<div class="d-flex gap-2">
+									<div class="d-flex gap-2 flex-wrap dashboard-periods">
 										<button v-for="p in ['Current', 'Goal', 'Balance']" :key="p"
 											class="btn btn-sm rounded-3 px-3" :style="activePeriod === p
 													? 'background-color:#2d8a4e; color:white;'
@@ -92,17 +89,21 @@
 										</button>
 									</div>
 								</div>
-								<canvas ref="lineChart" height="120"></canvas>
+								<div class="responsive-chart responsive-chart--tall">
+									<canvas ref="lineChart"></canvas>
+								</div>
 							</div>
 						</div>
 					</div>
 
 					<!-- Doughnut Chart -->
 					<div class="col-12 col-lg-4">
-						<div class="card border-0 shadow-sm rounded-4 h-100">
-							<div class="card-body p-4">
+						<div class="card border-0 shadow-sm rounded-4 h-100 page-section-card">
+							<div class="card-body p-4 page-section-body">
 								<h6 class="fw-bold text-dark mb-3">Expense Breakdown</h6>
-								<canvas ref="doughnutChart" height="180"></canvas>
+								<div class="responsive-chart">
+									<canvas ref="doughnutChart"></canvas>
+								</div>
 								<div class="mt-3">
 									<div class="d-flex justify-content-between small text-secondary mb-1"
 										v-for="s in sources" :key="s.label">
@@ -121,24 +122,26 @@
 				<div class="row g-3">
 					<!-- Bar Chart -->
 					<div class="col-12 col-lg-5">
-						<div class="card border-0 shadow-sm rounded-4 h-100">
-							<div class="card-body p-4">
+						<div class="card border-0 shadow-sm rounded-4 h-100 page-section-card">
+							<div class="card-body p-4 page-section-body">
 								<h6 class="fw-bold text-dark mb-3">Budget Snapshot</h6>
-								<canvas ref="barChart" height="160"></canvas>
+								<div class="responsive-chart">
+									<canvas ref="barChart"></canvas>
+								</div>
 							</div>
 						</div>
 					</div>
 
 					<!-- Expenses Table -->
 					<div class="col-12 col-lg-7">
-						<div class="card border-0 shadow-sm rounded-4 h-100">
-							<div class="card-body p-4">
-								<div class="d-flex justify-content-between align-items-center mb-3">
+						<div class="card border-0 shadow-sm rounded-4 h-100 page-section-card">
+							<div class="card-body p-4 page-section-body">
+								<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 									<h6 class="fw-bold text-dark mb-0">Monthly Expenses</h6>
 									<a href="#" class="small text-success text-decoration-none fw-semibold">Latest
 										analysis</a>
 								</div>
-								<div class="table-responsive">
+								<div class="table-responsive desktop-table">
 									<table class="table table-borderless align-middle small mb-0">
 										<thead>
 											<tr class="text-secondary">
@@ -175,6 +178,37 @@
 										</tbody>
 									</table>
 								</div>
+								<div class="mobile-card-list">
+									<div v-for="tx in transactions" :key="`${tx.id}-mobile`" class="dashboard-expense-card">
+										<div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+											<div class="d-flex align-items-center gap-2 min-w-0">
+												<div
+													class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0"
+													:style="`background-color:${tx.color}; width:34px; height:34px; font-size:13px;`"
+												>
+													{{ tx.name[0] }}
+												</div>
+												<div class="min-w-0">
+													<div class="fw-semibold text-dark text-truncate">{{ tx.name }}</div>
+													<div class="text-secondary small">{{ tx.date }}</div>
+												</div>
+											</div>
+											<div class="fw-bold text-dark text-end">{{ tx.amount }}</div>
+										</div>
+										<div>
+											<span
+												class="badge rounded-pill px-3 py-2"
+												:style="tx.status === 'Normal'
+													? 'background:#e8f5ee; color:#2d8a4e;'
+													: tx.status === 'High'
+														? 'background:#fff8e1; color:#f59e0b;'
+														: 'background:#fdecea; color:#e53935;'"
+											>
+												{{ tx.status }}
+											</span>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -189,7 +223,6 @@
 						</p>
 					</div>
 				</div>
-			</main>
 		</div>
 	</div>
 </template>
@@ -491,6 +524,7 @@ export default {
 				},
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					plugins: {
 						legend: { display: false },
 					},
@@ -536,6 +570,7 @@ export default {
 				},
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					cutout: "72%",
 					plugins: {
 						legend: { display: false },
@@ -565,6 +600,7 @@ export default {
 				},
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					plugins: {
 						legend: { display: false },
 					},
@@ -609,6 +645,7 @@ export default {
 				},
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					plugins: { legend: { display: false } },
 					scales: {
 						y: {
@@ -644,6 +681,7 @@ export default {
 				},
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					cutout: "72%",
 					plugins: { legend: { display: false } },
 				},
@@ -666,6 +704,7 @@ export default {
 				},
 				options: {
 					responsive: true,
+					maintainAspectRatio: false,
 					plugins: { legend: { display: false } },
 					scales: {
 						y: {
@@ -689,3 +728,49 @@ export default {
 	},
 };
 </script>
+
+<style scoped>
+.dashboard-main {
+	padding: 0;
+}
+
+.dashboard-date-badge {
+	white-space: nowrap;
+}
+
+.min-w-0 {
+	min-width: 0;
+}
+
+.dashboard-expense-card {
+	background: #f8faf8;
+	border: 1px solid rgba(45, 138, 78, 0.08);
+	border-radius: 1rem;
+	padding: 1rem;
+}
+
+@media (max-width: 767.98px) {
+	.dashboard-topbar {
+		align-items: flex-start !important;
+	}
+
+	.dashboard-stat-value {
+		font-size: 1.55rem !important;
+	}
+
+	.dashboard-chart-toolbar {
+		align-items: stretch !important;
+	}
+
+	.dashboard-periods {
+		display: grid !important;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		width: 100%;
+	}
+
+	.dashboard-periods .btn {
+		width: 100%;
+		padding-inline: 0.5rem;
+	}
+}
+</style>
