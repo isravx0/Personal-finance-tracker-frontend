@@ -88,13 +88,10 @@ export default {
 					username: this.username,
 					password: this.password
 				}, { withCredentials: true })
-				if (response.data.success) {
-					// Store user in Pinia
-					this.userStore.setUser(response.data.user)
-					// Redirect to dashboard
-					this.$router.push('/view/app/dashboard')
-				} else {
-					this.errorMsg = response.data.message
+
+				if (response.data.success && response.data.requires_2fa) {
+					this.$router.push('/view/public/verify-two-factor')
+					return
 				}
 			} catch (error) {
 				this.errorMsg = 'An error occurred. Please try again.'

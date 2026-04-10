@@ -23,6 +23,10 @@ const routes = [
 		component: () => import('../view/public/ResetPassword.vue'),
 	},
 	{
+		path: '/view/public/verify-two-factor',
+		component: () => import('../view/public/VerifyTwoFactor.vue'),
+	},
+	{
 		path: '/view/app/dashboard',
 		component: () => import('../view/app/Dashboard/index.vue'),
 		meta: { requiresAuth: true },
@@ -61,7 +65,16 @@ router.beforeEach(async (to, from, next) => {
 		return next('/view/public/login')
 	}
 
-	if ((to.path === '/view/public/login' || to.path === '/view/public/register' || to.path === '/view/public/forgot-password' || to.path === '/view/public/reset-password') && userStore.isAuthenticated) {
+	if (
+		(
+			to.path === '/view/public/login' ||
+			to.path === '/view/public/register' ||
+			to.path === '/view/public/forgot-password' ||
+			to.path === '/view/public/reset-password' ||
+			to.path === '/view/public/verify-two-factor'
+		) &&
+		userStore.isAuthenticated
+	) {
 		return next('/view/app/dashboard')
 	}
 

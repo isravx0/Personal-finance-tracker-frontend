@@ -6,6 +6,24 @@
 				<h2 class="mb-1 fw-bold text-dark">Transaction History</h2>
 				<p class="text-secondary small mb-0">View all your saved financial analysis records.</p>
 			</div>
+			<div class="d-flex gap-2 flex-wrap">
+				<button 
+					class="btn btn-outline-success rounded-3 small fw-semibold px-3"
+					@click="exportToPdf"
+					:disabled="history.length === 0 || exporting"
+				>
+					<span v-if="exporting" class="spinner-border spinner-border-sm me-2"></span>
+					Export PDF
+				</button>
+				<button 
+					class="btn btn-outline-success rounded-3 small fw-semibold px-3"
+					@click="exportToCsv"
+					:disabled="history.length === 0 || exporting"
+				>
+					<span v-if="exporting" class="spinner-border spinner-border-sm me-2"></span>
+					Export CSV
+				</button>
+			</div>
 		</div>
 
 		<div class="card border-0 shadow-sm rounded-4 page-section-card">
@@ -174,7 +192,8 @@ export default {
 			history: [],
 			searchQuery: '',
 			statusFilter: '',
-			monthFilter: ''
+			monthFilter: '',
+			exporting: false
 		}
 	},
 	computed: {
@@ -274,6 +293,45 @@ export default {
 				return 'background:#fff8e1; color:#f59e0b;'
 			}
 			return 'background:#e8f5ee; color:#2d8a4e;'
+		},
+		async exportToPdf() {
+			this.exporting = true
+			try {
+				const link = document.createElement('a')
+				link.href = 'http://localhost:8080/analysis/export-pdf'
+				link.setAttribute('target', '_blank')
+				document.body.appendChild(link)
+				link.click()
+				document.body.removeChild(link)
+			} catch (error) {
+				console.error('Error exporting PDF:', error)
+				alert('Failed to export PDF. Please try again.')
+			} finally {
+				this.exporting = false
+			}
+		},
+		async exportToCsv() {
+			this.exporting = true
+			try {
+				const response = await axios.get('http://localhost:8080/analysis/export-csv', {
+					withCredentials: true,
+					responseType: 'blob'
+				})
+				const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' })
+				const link = document.createElement('a')
+				const url = URL.createObjectURL(blob)
+				link.setAttribute('href', url)
+				link.setAttribute('download', 'analysis_history_' + new Date().toISOString().slice(0, 10) + '.csv')
+				document.body.appendChild(link)
+				link.click()
+				document.body.removeChild(link)
+				URL.revokeObjectURL(url)
+			} catch (error) {
+				console.error('Error exporting CSV:', error)
+				alert('Failed to export CSV. Please try again.')
+			} finally {
+				this.exporting = false
+			}
 		}
 	},
 	mounted() {
