@@ -182,6 +182,7 @@
 
 <script>
 import axios from 'axios'
+import { formatCurrency, getCurrencyPreference } from '@/utils/currency'
 
 export default {
 	name: 'History',
@@ -193,6 +194,7 @@ export default {
 			searchQuery: '',
 			statusFilter: '',
 			monthFilter: '',
+			selectedCurrency: getCurrencyPreference(),
 			exporting: false
 		}
 	},
@@ -259,7 +261,7 @@ export default {
 			}
 		},
 		formatMoney(value) {
-			return `$${Number(value || 0).toFixed(2)}`
+			return formatCurrency(value, this.selectedCurrency)
 		},
 		formatDate(dateString) {
 			if (!dateString) return '-'
@@ -298,7 +300,7 @@ export default {
 			this.exporting = true
 			try {
 				const link = document.createElement('a')
-				link.href = 'http://localhost:8080/analysis/export-pdf'
+				link.href = 'http://localhost:8080/analysis/export-pdf?currency=' + encodeURIComponent(this.selectedCurrency)
 				link.setAttribute('target', '_blank')
 				document.body.appendChild(link)
 				link.click()
@@ -313,7 +315,7 @@ export default {
 		async exportToCsv() {
 			this.exporting = true
 			try {
-				const response = await axios.get('http://localhost:8080/analysis/export-csv', {
+				const response = await axios.get('http://localhost:8080/analysis/export-csv?currency=' + encodeURIComponent(this.selectedCurrency), {
 					withCredentials: true,
 					responseType: 'blob'
 				})
@@ -335,6 +337,7 @@ export default {
 		}
 	},
 	mounted() {
+		this.selectedCurrency = getCurrencyPreference()
 		this.loadHistoryData()
 	}
 }

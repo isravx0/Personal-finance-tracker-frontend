@@ -15,7 +15,7 @@
 								<path d="M4 4h8a2 2 0 0 1 2 2v5a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V6a2 2 0 0 1 2-2z" />
 							</svg>
 						</div>
-						<h3 class="fw-bold text-success mb-1">Let’s analyze your finances 💸</h3>
+						<h3 class="fw-bold text-success mb-1">Let’s analyze your finances</h3>
 						<p class="text-secondary small mb-0">
 							Answer a few quick questions so Mintly can understand your income, expenses, and savings.
 						</p>
@@ -46,7 +46,7 @@
 
 								<label class="form-label small fw-semibold text-secondary">Monthly income</label>
 								<div class="input-group">
-									<span class="input-group-text bg-light border-0 rounded-start-3">$</span>
+								<span class="input-group-text bg-light border-0 rounded-start-3">{{ currencySymbol }}</span>
 									<input type="number" class="form-control bg-light border-0 rounded-end-3"
 										v-model="form.monthly_income" placeholder="e.g. 3000" />
 								</div>
@@ -72,7 +72,7 @@
 									<div class="col-12 col-md-6">
 										<label class="form-label small fw-semibold text-secondary">Rent</label>
 										<div class="input-group">
-											<span class="input-group-text bg-light border-0 rounded-start-3">$</span>
+										<span class="input-group-text bg-light border-0 rounded-start-3">{{ currencySymbol }}</span>
 											<input type="number" class="form-control bg-light border-0 rounded-end-3" v-model="form.rent"
 												placeholder="0" />
 										</div>
@@ -81,7 +81,7 @@
 									<div class="col-12 col-md-6">
 										<label class="form-label small fw-semibold text-secondary">Food</label>
 										<div class="input-group">
-											<span class="input-group-text bg-light border-0 rounded-start-3">$</span>
+										<span class="input-group-text bg-light border-0 rounded-start-3">{{ currencySymbol }}</span>
 											<input type="number" class="form-control bg-light border-0 rounded-end-3" v-model="form.food"
 												placeholder="0" />
 										</div>
@@ -90,7 +90,7 @@
 									<div class="col-12 col-md-6">
 										<label class="form-label small fw-semibold text-secondary">Transport</label>
 										<div class="input-group">
-											<span class="input-group-text bg-light border-0 rounded-start-3">$</span>
+										<span class="input-group-text bg-light border-0 rounded-start-3">{{ currencySymbol }}</span>
 											<input type="number" class="form-control bg-light border-0 rounded-end-3" v-model="form.transport"
 												placeholder="0" />
 										</div>
@@ -99,7 +99,7 @@
 									<div class="col-12 col-md-6">
 										<label class="form-label small fw-semibold text-secondary">Bills</label>
 										<div class="input-group">
-											<span class="input-group-text bg-light border-0 rounded-start-3">$</span>
+										<span class="input-group-text bg-light border-0 rounded-start-3">{{ currencySymbol }}</span>
 											<input type="number" class="form-control bg-light border-0 rounded-end-3" v-model="form.bills"
 												placeholder="0" />
 										</div>
@@ -108,7 +108,7 @@
 									<div class="col-12 col-md-6">
 										<label class="form-label small fw-semibold text-secondary">Entertainment</label>
 										<div class="input-group">
-											<span class="input-group-text bg-light border-0 rounded-start-3">$</span>
+										<span class="input-group-text bg-light border-0 rounded-start-3">{{ currencySymbol }}</span>
 											<input type="number" class="form-control bg-light border-0 rounded-end-3"
 												v-model="form.entertainment" placeholder="0" />
 										</div>
@@ -117,7 +117,7 @@
 									<div class="col-12 col-md-6">
 										<label class="form-label small fw-semibold text-secondary">Other expenses</label>
 										<div class="input-group">
-											<span class="input-group-text bg-light border-0 rounded-start-3">$</span>
+										<span class="input-group-text bg-light border-0 rounded-start-3">{{ currencySymbol }}</span>
 											<input type="number" class="form-control bg-light border-0 rounded-end-3"
 												v-model="form.other_expenses" placeholder="0" />
 										</div>
@@ -143,9 +143,36 @@
 
 								<label class="form-label small fw-semibold text-secondary">Target savings</label>
 								<div class="input-group">
-									<span class="input-group-text bg-light border-0 rounded-start-3">$</span>
+									<span class="input-group-text bg-light border-0 rounded-start-3">{{ currencySymbol }}</span>
 									<input type="number" class="form-control bg-light border-0 rounded-end-3"
 										v-model="form.target_savings" placeholder="e.g. 500" />
+								</div>
+							</div>
+
+							<!-- Currency -->
+							<div class="mb-4">
+								<div class="d-flex align-items-center gap-2 mb-3">
+									<div class="rounded-3 d-flex align-items-center justify-content-center bg-success bg-opacity-10"
+										style="width:36px;height:36px;">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#2d8a4e" viewBox="0 0 16 16">
+											<path d="M8 0a8 8 0 1 0 8 8 8.009 8.009 0 0 0-8-8zm0 14A6 6 0 1 1 14 8a6.007 6.007 0 0 1-6 6zm1-8H7V4H6v3H5v1h1v2H5v1h1v1h1v-1h2v1h1v-1h1v-1h-1V9h1V8h-1V6zm-2 2H7V7h2v1zm0 2H7v-1h2v1z" />
+										</svg>
+									</div>
+									<div>
+										<h6 class="fw-bold mb-0 text-dark">Currency</h6>
+										<p class="small text-secondary mb-0">Choose the currency you want to use for this analysis.</p>
+									</div>
+								</div>
+
+								<div class="row g-3">
+									<div class="col-12 col-md-6">
+										<label class="form-label small fw-semibold text-secondary">Currency</label>
+										<select class="form-select bg-light border-0 rounded-3" v-model="selectedCurrency">
+											<option v-for="currency in currencyOptions" :key="currency.code" :value="currency.code">
+												{{ currency.code }} ({{ currency.symbol }})
+											</option>
+										</select>
+									</div>
 								</div>
 							</div>
 
@@ -155,16 +182,16 @@
 								<div class="row g-2 small">
 									<div class="col-6 col-md-4">
 										<div class="text-secondary">Income</div>
-										<div class="fw-bold text-dark">${{ previewIncome }}</div>
+										<div class="fw-bold text-dark">{{ currencySymbol }}{{ previewIncome }}</div>
 									</div>
 									<div class="col-6 col-md-4">
 										<div class="text-secondary">Expenses</div>
-										<div class="fw-bold text-dark">${{ previewExpenses }}</div>
+										<div class="fw-bold text-dark">{{ currencySymbol }}{{ previewExpenses }}</div>
 									</div>
 									<div class="col-12 col-md-4">
 										<div class="text-secondary">Estimated remaining</div>
 										<div class="fw-bold" :class="previewRemaining >= 0 ? 'text-success' : 'text-danger'">
-											${{ previewRemaining }}
+										{{ currencySymbol }}{{ previewRemaining }}
 										</div>
 									</div>
 								</div>
@@ -192,12 +219,22 @@
 </template>
 
 <script>
+import { getCurrencyPreference, getCurrencySymbol, setCurrencyPreference } from '@/utils/currency'
+
 export default {
 	name: 'AnalysisFormPage',
 	data() {
 		return {
 			loading: false,
 			errorMsg: '',
+			selectedCurrency: getCurrencyPreference(),
+			currencyOptions: [
+				{ code: 'EUR', symbol: '€' },
+				{ code: 'USD', symbol: '$' },
+				{ code: 'GBP', symbol: '£' },
+				{ code: 'INR', symbol: '₹' },
+				{ code: 'JPY', symbol: '¥' },
+			],
 			form: {
 				monthly_income: '',
 				rent: '',
@@ -210,7 +247,13 @@ export default {
 			}
 		}
 	},
+	mounted() {
+		this.loadPreferences()
+	},
 	computed: {
+		currencySymbol() {
+			return getCurrencySymbol(this.selectedCurrency)
+		},
 		previewIncome() {
 			return Number(this.form.monthly_income || 0).toFixed(2)
 		},
@@ -233,6 +276,10 @@ export default {
 		}
 	},
 	methods: {
+		loadPreferences() {
+			this.selectedCurrency = getCurrencyPreference()
+		},
+
 		resetForm() {
 			this.form = {
 				monthly_income: '',
@@ -244,6 +291,8 @@ export default {
 				other_expenses: '',
 				target_savings: ''
 			}
+			this.selectedCurrency = 'EUR'
+			setCurrencyPreference(this.selectedCurrency)
 			this.errorMsg = ''
 		},
 
@@ -252,13 +301,18 @@ export default {
 			this.errorMsg = ''
 
 			try {
+				setCurrencyPreference(this.selectedCurrency)
+
 				const response = await fetch('http://localhost:8080/analysis/analyze', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
 					credentials: 'include',
-					body: JSON.stringify(this.form)
+					body: JSON.stringify({
+						...this.form,
+						currency: this.selectedCurrency
+					})
 				})
 
 				const data = await response.json()
@@ -284,6 +338,15 @@ export default {
 </script>
 
 <style scoped>
+.transition-card {
+	transition: all 0.2s ease;
+}
+
+.transition-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px rgba(45, 138, 78, 0.12);
+}
+
 @media (max-width: 767.98px) {
 	.analysis-form-body {
 		padding: 1rem !important;

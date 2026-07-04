@@ -28,7 +28,10 @@
 									<div class="small text-secondary mb-1">Email</div>
 									<div class="fw-semibold text-dark mb-3">{{ form.email || '-' }}</div>
 
-									<div class="small text-secondary mb-1">Status</div>
+									<div class="small text-secondary mb-1">Preferred currency</div>
+									<div class="fw-semibold text-dark">{{ form.currency || 'EUR' }}</div>
+
+									<div class="small text-secondary mb-1 mt-3">Status</div>
 									<div class="fw-semibold text-success">Active</div>
 								</div>
 							</div>
@@ -147,6 +150,7 @@
 <script>
 import axios from 'axios'
 import { useUserStore } from '@/stores/userStore'
+import { getCurrencyPreference, setCurrencyPreference } from '@/utils/currency'
 
 export default {
 	name: 'Profile',
@@ -165,9 +169,17 @@ export default {
 				name: '',
 				username: '',
 				email: '',
+				currency: getCurrencyPreference(),
 				password: '',
 				confirmPassword: ''
 			},
+			currencyOptions: [
+				{ code: 'EUR', symbol: '€' },
+				{ code: 'USD', symbol: '$' },
+				{ code: 'GBP', symbol: '£' },
+				{ code: 'INR', symbol: '₹' },
+				{ code: 'JPY', symbol: '¥' }
+			],
 			navItems: [
 				{
 					label: 'Dashboard',
@@ -211,6 +223,7 @@ export default {
 					this.form.name = user.name || ''
 					this.form.username = user.username || ''
 					this.form.email = user.email || ''
+					this.form.currency = getCurrencyPreference()
 					this.form.password = ''
 					this.form.confirmPassword = ''
 				} else {
@@ -240,12 +253,15 @@ export default {
 			this.saving = true
 
 			try {
+				setCurrencyPreference(this.form.currency)
+
 				const response = await axios.post(
 					'http://localhost:8080/user/updateProfile',
 					{
 						name: this.form.name,
 						username: this.form.username,
 						email: this.form.email,
+						currency: this.form.currency,
 						password: this.form.password,
 						confirmPassword: this.form.confirmPassword
 					},

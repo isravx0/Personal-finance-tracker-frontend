@@ -5,7 +5,7 @@
 				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 dashboard-topbar">
 					<div>
 						<h4 class="fw-bold text-dark mb-0">
-							Good morning, {{ userStore.user?.name || "User" }} 🌿
+							{{ greetings }}, {{ userStore.user?.name || "User" }} 🌿
 						</h4>
 						<p class="text-secondary small mb-0">Here’s your latest financial overview</p>
 					</div>
@@ -66,6 +66,44 @@
 							<div>
 								<h6 class="fw-bold text-dark mb-1">Mintly Insight</h6>
 								<p class="text-secondary small mb-0">{{ analysisAdvice }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Feature upgrades -->
+				<div class="card border-0 shadow-sm rounded-4 mb-4 page-section-card">
+					<div class="card-body p-4 page-section-body">
+						<div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
+							<div>
+								<h6 class="fw-bold text-dark mb-1">Next upgrades</h6>
+								<p class="text-secondary small mb-0">Pick the features you want Mintly to expand with next.</p>
+							</div>
+							<div class="badge rounded-pill px-3 py-2" style="background-color:#e8f5ee; color:#2d8a4e">
+								Currency: {{ selectedCurrency }}
+							</div>
+						</div>
+						<div class="row g-3">
+							<div class="col-12 col-md-6 col-xl-3" v-for="feature in featureOptions" :key="feature.id">
+								<button class="w-100 text-start rounded-4 border p-3 bg-white transition-card"
+									:class="isFeatureEnabled(feature.id) ? 'border-success' : 'border-light'"
+									@click="toggleFeature(feature.id)">
+									<div class="d-flex justify-content-between align-items-center mb-2">
+										<span class="fw-semibold text-dark">{{ feature.title }}</span>
+										<span class="small" :class="isFeatureEnabled(feature.id) ? 'text-success' : 'text-secondary'">
+											{{ isFeatureEnabled(feature.id) ? 'Enabled' : 'Add' }}
+										</span>
+									</div>
+									<p class="small text-secondary mb-0">{{ feature.description }}</p>
+								</button>
+							</div>
+						</div>
+						<div v-if="activeFeatureDetails.length" class="mt-3">
+							<div class="d-flex flex-wrap gap-2">
+								<span v-for="feature in activeFeatureDetails" :key="feature.id"
+									class="badge rounded-pill px-3 py-2" style="background-color:#f2f8f4; color:#2d8a4e">
+									{{ feature.title }}
+								</span>
 							</div>
 						</div>
 					</div>
@@ -231,6 +269,7 @@
 import axios from "axios";
 import { Chart, registerables } from "chart.js";
 import { useUserStore } from "@/stores/userStore";
+import { getCurrencyPreference, getCurrencySymbol as getCurrencySymbolByCode, formatCurrency } from "@/utils/currency";
 
 Chart.register(...registerables);
 
@@ -244,6 +283,14 @@ export default {
 		return {
 			activeNav: "Dashboard",
 			activePeriod: "Current",
+			selectedCurrency: getCurrencyPreference(),
+			dashboardFeatures: [],
+			featureOptions: [
+				{ id: "savings-goals", title: "Savings goals", description: "Track progress toward your monthly target." },
+				{ id: "bill-reminders", title: "Bill reminders", description: "Get nudges before important payments land." },
+				{ id: "forecasting", title: "Forecasting", description: "See where your cash flow could head next month." },
+				{ id: "category-budgets", title: "Category budgets", description: "Set limits for each spending category." },
+			],
 			today: new Date().toLocaleDateString("en-GB", {
 				day: "numeric",
 				month: "long",
@@ -253,7 +300,7 @@ export default {
 			analysisError: "",
 			analysisAdvice: "",
 			hasAnalysis: false,
-
+			greetings: "Good morning",
 			navItems: [
 				{
 					label: "Dashboard",
@@ -336,13 +383,68 @@ export default {
 		};
 	},
 	async mounted() {
+		this.loadPreferences();
+		this.greetings = this.setGreetings();
 		await this.userStore.fetchUser();
 		this.initCharts();
 		await this.loadAnalysisData();
 	},
+	computed: {
+		activeFeatureDetails() {
+			return this.featureOptions.filter((feature) => this.dashboardFeatures.includes(feature.id));
+		},
+	},
 	methods: {
+		setGreetings() {
+			const currentHour = new Date().getHours();
+
+			if (currentHour < 12) {
+				return "Good morning";
+			}
+
+			if (currentHour < 18) {
+				return "Good afternoon";
+			}
+
+			if (currentHour < 22) {
+				return "Good evening";
+			}
+
+			return "Good night";
+		},
+
+		loadPreferences() {
+			this.selectedCurrency = getCurrencyPreference();
+
+			const savedFeatures = localStorage.getItem("mintlyDashboardFeatures");
+			if (savedFeatures) {
+				try {
+					this.dashboardFeatures = JSON.parse(savedFeatures);
+				} catch (error) {
+					this.dashboardFeatures = [];
+				}
+			}
+		},
+
+		isFeatureEnabled(featureId) {
+			return this.dashboardFeatures.includes(featureId);
+		},
+
+		toggleFeature(featureId) {
+			if (this.isFeatureEnabled(featureId)) {
+				this.dashboardFeatures = this.dashboardFeatures.filter((id) => id !== featureId);
+			} else {
+				this.dashboardFeatures = [...this.dashboardFeatures, featureId];
+			}
+			localStorage.setItem("mintlyDashboardFeatures", JSON.stringify(this.dashboardFeatures));
+		},
+
+		getCurrencySymbol(currencyCode = this.selectedCurrency) {
+			return getCurrencySymbolByCode(currencyCode);
+		},
+
 		formatMoney(value) {
-			return `€${Number(value || 0).toFixed(2)}`;
+			return formatCurrency(value, this.selectedCurrency);
 		},
 
 		getExpenseStatus(amount, income) {
@@ -747,6 +849,15 @@ export default {
 	border: 1px solid rgba(45, 138, 78, 0.08);
 	border-radius: 1rem;
 	padding: 1rem;
+}
+
+.transition-card {
+	transition: all 0.2s ease;
+}
+
+.transition-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px rgba(45, 138, 78, 0.12);
 }
 
 @media (max-width: 767.98px) {
